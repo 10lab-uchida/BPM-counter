@@ -1,0 +1,126 @@
+<code>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BPM Counter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            max-width: 90%;
+            margin: 0 auto;
+            text-align: center;
+            border: 2px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        #averageBPM {
+            font-size: 24px;
+        }
+
+        .round-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 24px;
+            line-height: 120px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 20px;
+        }
+
+        .round-button:hover {
+            background-color: #0056b3;
+        }
+
+        .reset-button {
+            font-size: 24px;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .reset-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h2>BPMカウンター</h2>
+        <p>音楽に合わせてスペースキーを押すか、ボタンをタップ/クリックしてBPMを計測してください。</p>
+        <p><span id="averageBPM">---</span></p>
+        <button id="tapButton" class="round-button">TAP</button>
+        <br>
+        <button onclick="reset()" class="reset-button">リセット</button>
+    </div>
+
+    <script>
+        // Initialize variables
+        let startTime;
+        let lastPressTime;
+        let tapCount = 0;
+        let totalBPMTime = 0;
+        let totalTaps = 0;
+
+        // Event listener for space key press
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                handleTap();
+            }
+        });
+
+        // Event listener for button tap/click
+        document.getElementById('tapButton').addEventListener('click', handleTap);
+
+        // Function to handle tap
+        function handleTap() {
+            // Start counting BPM if it's not the first tap
+            if (tapCount !== 0) {
+                let currentTime = new Date().getTime();
+                let timeDifference = (currentTime - lastPressTime) / 1000; // Convert milliseconds to seconds
+                let bpm = Math.round(60 / timeDifference);
+
+                // Add time difference to total BPM time
+                totalBPMTime += timeDifference;
+                totalTaps++;
+
+                // Calculate and display average BPM
+                let averageBPM = totalTaps > 0 ? Math.round(totalTaps / (totalBPMTime / 60)) : '---';
+                document.getElementById('averageBPM').textContent = averageBPM;
+            }
+
+            // Reset tap count
+            tapCount++;
+
+            // Set start time for the first tap
+            if (tapCount === 1) {
+                startTime = new Date().getTime();
+            }
+
+            // Update last tap time
+            lastPressTime = new Date().getTime();
+        }
+
+        // Reset function
+        function reset() {
+            tapCount = 0;
+            totalBPMTime = 0;
+            totalTaps = 0;
+            document.getElementById('averageBPM').textContent = '---';
+        }
+    </script>
+</body>
+</html>
+</code>
